@@ -1,11 +1,12 @@
 #!/bin/bash
 
 DIRPATH=${DIRPATH}
+HOME=${HOME}
 USER=${USER}
 MAILDIR=${MAILDIR}
 
 # Control will enter here if $MAILDIR exists.
-cd /home/$USER
+cd $HOME
 untar=`tar -zxvf Maildir-*.tar.gz --strip-components=3`
 
 if [ -d "$untar" ]; then
@@ -16,7 +17,7 @@ fi
 
 else
 
- maildirmake -f $MAILDIR
+ maildirmake
 
 fi
 
@@ -32,3 +33,4 @@ $DIRPATH/saslauthd start
 $DIRPATH/postfix start
 
 tail -f /var/log/mail.log
+

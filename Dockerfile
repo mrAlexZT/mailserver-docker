@@ -1,28 +1,27 @@
 FROM debian:jessie
-
 MAINTAINER Jerome Zamaroczy
 
 ARG DOMAINE="zamaroczy.fr"
-ARG LOGIN="jerome"
+ARG USER="jerome"
 ARG PASSWORD="password"
 
 ENV TERM=xterm \
     DIRPATH="/etc/init.d" \
     PF_VERSION="2.11.3-1" \
     DOMAINE=${DOMAINE} \
-    USER=${LOGIN} \
+    USER=${USER} \
     PASSWORD=${PASSWORD} \
     CWD_PSTF="/etc/postfix" \
     CWD_COR="/etc/courier" \
-    MAILDIR="/home/${LOGIN}/Maildir" \
-    ENV DH_BITS="2048" \
-    ENV DAYS="3650"
-MAINTAINER Jerome Zamaroczy
+    HOME="/home/${USER}"
+    MAILDIR="${HOME}/Maildir" \
+    DH_BITS="2048" \
+    DAYS="3650"
 
 LABEL vendor=ACME\ Incorporated \
       $DOMAINE.roundcube-beta="mailserver-docker" \
       $DOMAINE.roundcube-production="prod" \
-      $DOMAINE.version="$RC_VERSION-complete" \
+      $DOMAINE.version="postfix-$PF_VERSION" \
       $DOMAINE.release-date="2017-04-03"
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -62,11 +61,11 @@ RUN chown postfix:sasl /var/spool/postfix/etc/sasldb2
 RUN chmod 640 /var/spool/postfix/etc/sasldb2
 RUN rm -rf /etc/sasldb2
 RUN ln -s /var/spool/postfix/etc/sasldb2 /etc/sasldb2
-RUN useradd -d /home/${LOGIN} -ms /bin/bash -g $USER -p $PASSWORD $USER
+RUN useradd -d /home/$USER -ms /bin/bash -p $PASSWORD $USER
 RUN echo $PASSWORD | saslpasswd2 -c -a smtpauth -u smtp.$DOMAINE $USER
 RUN chmod +x $DIRPATH/start.sh
 
-VOLUME ["$MAILDIR"]
+VOLUME ["$HOME"]
 
 #GEN CERT IMAPS and SMTPS SASL
 WORKDIR $CWD_COR
@@ -78,3 +77,4 @@ EXPOSE 587 465 25 993 143
 
 #START ENVIRONNEMENT MAIL-SERVER MAYBE USE DATA USER ELSE CREATE NEW MAILDIR
 CMD ["/bin/bash", "$DIRPATH/start.sh", "-d"]
+

@@ -1,6 +1,6 @@
 #!/bin/bash
 DOM=${DOMAINE}
-CWD_PSTF==${CWD_PSTF}
+CWD_PSTF=${CWD_PSTF}
 DAYS=${DAYS}
 DH_BITS=${DH_BITS}
 
@@ -31,3 +31,4 @@ openssl x509 -req -in $CWD_PSTF/ssl/smtpd.csr \
     -CAkey $CWD_PSTF/ssl/cakey.pem  -CAcreateserial \
     -out $CWD_PSTF/ssl/smtpd.crt \
     -days $DAYS -extensions v3_req -extfile $CWD_PSTF/extfile.cnf
+
