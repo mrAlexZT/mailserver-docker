@@ -77,6 +77,9 @@ RUN sed -i -e "s/user/$USER/g"  $CWD_COR/imapd.cnf
 RUN mkimapdcert
 RUN sh $DIRPATH/gen-cert-smtps-sasl.sh
 
+#Set domaine in configuration postfix
+RUN sed -i -e "s/domaine.tld/$DOMAINE/g"  CWD_PSTF/main.cf 
+
 EXPOSE 587 465 25 993 143
 
 #START ENVIRONNEMENT MAIL-SERVER MAYBE USE DATA USER ELSE CREATE NEW MAILDIR

@@ -9,10 +9,10 @@ setgid_group = postdrop
 mail_owner = postfix
 
 # Nom de la machine, du domaine et gestion du réseau:
-myhostname = smtp.zamaroczy.fr
-mydomain = zamaroczy.fr
-masquerade_domains = zamaroczy.fr
-mynetworks = 192.168.0.0/24, 10.8.0.0/24, 127.0.0.0/8, 172.17.0.0/2
+myhostname = smtp.domaine.tld
+mydomain = domaine.tld
+masquerade_domains = domaine.tld
+mynetworks = 192.168.0.0/24, 10.8.0.0/24, 127.0.0.0/8, 172.17.0.0/24
 
 # Gestion des alias:
 alias_maps = hash:/etc/aliases
@@ -23,10 +23,10 @@ myorigin = /etc/mailname
 default_transport = smtp
 
 # Serveur d'envoi de votre Fournisseur d'accès à Internet:
-relayhost = 
+relayhost =
 
 # Paramètre de reception du courriel:
-mydestination = $myhostname, localhost.$mydomain, $mydomain, localhost 
+mydestination = $myhostname, localhost.$mydomain, $mydomain, localhost
 inet_interfaces = all
 
 # Utilisation de Maildir pour recevoir et gérer les mails via courier-imap:
@@ -57,11 +57,11 @@ smtpd_helo_restrictions = permit_mynetworks,
 			  reject_invalid_hostname,
 			  permit
 
-smtpd_sender_restrictions = permit_mynetworks, 
+smtpd_sender_restrictions = permit_mynetworks,
 			    reject_unknown_address,
 			    permit
 smtpd_recipient_restrictions =
-	       permit_mynetworks, 
+	       permit_mynetworks,
 	       permit_sasl_authenticated,
 	       permit_tls_clientcerts,
                reject_non_fqdn_sender,
@@ -74,7 +74,7 @@ smtpd_recipient_restrictions =
                reject_rbl_client list.dsbl.org,
 	       reject_rbl_client bl.spamcop.net,
 	       reject_rbl_client cbl.abuseat.org,
-               permit 
+               permit
 
 smtpd_sasl_local_domain = $myhostname
 #smtpd_sasl_application_name = smtpd
