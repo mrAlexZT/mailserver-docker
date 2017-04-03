@@ -9,6 +9,7 @@ MAILDIR=${MAILDIR}
 cd $HOME
 untar=`tar -zxvf Maildir-*.tar.gz --strip-components=2`
 
+
 if [ -f "$untar" ]; then
 
 

@@ -65,6 +65,7 @@ RUN useradd -d /home/$USER -ms /bin/bash -p $PASSWORD $USER
 RUN echo $PASSWORD | saslpasswd2 -c -a smtpauth -u smtp.$DOMAINE $USER
 RUN chmod +x $DIRPATH/start.sh
 
+
 #Mount Home directory user
 VOLUME ["$HOME"]
 
