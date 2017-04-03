@@ -61,7 +61,8 @@ RUN chown postfix:sasl /var/spool/postfix/etc/sasldb2
 RUN chmod 640 /var/spool/postfix/etc/sasldb2
 RUN rm -rf /etc/sasldb2
 RUN ln -s /var/spool/postfix/etc/sasldb2 /etc/sasldb2
-RUN useradd -d /home/$USER -ms /bin/bash -p $PASSWORD $USER
+RUN useradd -d /home/$USER -ms /bin/bash  $USER
+RUN echo $USER:$PASSWORD | chpasswd -c MD5
 RUN echo $PASSWORD | saslpasswd2 -c -a smtpauth -u smtp.$DOMAINE $USER
 RUN chmod +x $DIRPATH/start.sh
 
