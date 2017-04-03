@@ -1,6 +1,6 @@
 #!/bin/bash
 DOM=${DOMAINE}
-CWD_PSTF==${CWD_PSTF}
+CWD_PSTF=${CWD_PSTF}
 DAYS=${DAYS}
 DH_BITS=${DH_BITS}
 

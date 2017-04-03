@@ -1,27 +1,26 @@
 #!/bin/bash
 
 DIRPATH=${DIRPATH}
+HOME=${HOME}
 USER=${USER}
 MAILDIR=${MAILDIR}
 
 # Control will enter here if $MAILDIR exists.
-cd /home/$USER
-untar=`tar -zxvf Maildir-*.tar.gz --strip-components=3`
+cd $HOME
+untar=`tar -zxvf Maildir-*.tar.gz --strip-components=2`
 
-if [ -d "$untar" ]; then
+if [ -f "$untar" ]; then
 
 
   rm -rf Maildir-*.tar.gz
-fi
 
 else
 
- maildirmake -f $MAILDIR
+ maildirmake
 
 fi
 
-chown $USER:$USER $MAILDIR
-
+chown -R $USER:$USER $HOME
 
 $DIRPATH/rsyslog start
 $DIRPATH/courier-authdaemon start

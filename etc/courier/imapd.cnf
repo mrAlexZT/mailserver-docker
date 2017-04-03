@@ -10,12 +10,11 @@ default_md = sha1
 C=FR
 ST=FR
 L=Paris
-O=Courier Mail Server
+O=Courier IMAP Server
 OU=Automatically-generated IMAP SSL key
-CN=imaps.zamaroczy.fr
-emailAddress=postmaster@zamaroczy.fr
+CN=domaine.tld
+emailAddress=user@domaine.tld
 
 
 [ cert_type ]
 nsCertType = server
-
