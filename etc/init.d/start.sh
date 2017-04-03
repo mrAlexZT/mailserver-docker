@@ -1,18 +1,34 @@
 #!/bin/bash
 
-tar -zxvf Maildir-*.tar.gz --strip-components=3
-rm -rf Maildir-*.tar.gz
-chown jerome:jerome ../Maildir
+DIRPATH=${DIRPATH}
+USER=${USER}
+MAILDIR=${MAILDIR}
 
-#IP="$(ifconfig eth0 | sed -n '/inet adr/s/.*adr.\([^ ]*\) .*/\1/p')"
-#echo "$IP    zamaroczy.fr smtp.zamaroczy.fr mail.zamaroczy.fr imaps.zamaroczy.fr" >> /etc/hosts
+# Control will enter here if $MAILDIR exists.
+cd /home/$USER
+untar=`tar -zxvf Maildir-*.tar.gz --strip-components=3`
 
-/etc/init.d/rsyslog start
-/etc/init.d/courier-authdaemon start
-/etc/init.d/courier-imap start
-/etc/init.d/courier-imap-ssl start
-/etc/init.d/spamassassin start
-/etc/init.d/saslauthd start
-/etc/init.d/postfix start
+if [ -d "$untar" ]; then
+
+
+  rm -rf Maildir-*.tar.gz
+fi
+
+else
+
+ maildirmake -f $MAILDIR
+
+fi
+
+chown $USER:$USER $MAILDIR
+
+
+$DIRPATH/rsyslog start
+$DIRPATH/courier-authdaemon start
+$DIRPATH/courier-imap start
+$DIRPATH/courier-imap-ssl start
+$DIRPATH/spamassassin start
+$DIRPATH/saslauthd start
+$DIRPATH/postfix start
 
 tail -f /var/log/mail.log

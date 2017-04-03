@@ -2,8 +2,28 @@ FROM debian:jessie
 
 MAINTAINER Jerome Zamaroczy
 
-ENV DH_BITS=2048
-ENV DAYS=3650
+ARG DOMAINE="zamaroczy.fr"
+ARG LOGIN="jerome"
+ARG PASSWORD="password"
+
+ENV TERM=xterm \
+    DIRPATH="/etc/init.d" \
+    PF_VERSION="2.11.3-1" \
+    DOMAINE=${DOMAINE} \
+    USER=${LOGIN} \
+    PASSWORD=${PASSWORD} \
+    CWD_PSTF="/etc/postfix" \
+    CWD_COR="/etc/courier" \
+    MAILDIR="/home/${LOGIN}/Maildir" \
+    ENV DH_BITS="2048" \
+    ENV DAYS="3650"
+MAINTAINER Jerome Zamaroczy
+
+LABEL vendor=ACME\ Incorporated \
+      $DOMAINE.roundcube-beta="mailserver-docker" \
+      $DOMAINE.roundcube-production="prod" \
+      $DOMAINE.version="$RC_VERSION-complete" \
+      $DOMAINE.release-date="2017-04-03"
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
@@ -12,19 +32,19 @@ RUN (apt-get update && \
      courier-authdaemon courier-authlib courier-authlib-userdb courier-imap courier-imap-ssl courier-ssl apt-utils postfix courier-base gamin && \
      apt-get clean)
 
-COPY etc/courier/authdaemonrc /etc/courier/authdaemonrc
-COPY etc/courier/imapd.cnf /etc/courier/imapd.cnf
-COPY etc/courier/imapd /etc/courier/imapd
-COPY etc/courier/imapd-ssl /etc/courier/imapd-ssl
+COPY etc/courier/authdaemonrc $CWD_COR/authdaemonrc
+COPY etc/courier/imapd.cnf $CWD_COR/imapd.cnf
+COPY etc/courier/imapd $CWD_COR/imapd
+COPY etc/courier/imapd-ssl $CWD_COR/imapd-ssl
 
-COPY etc/postfix/dynamicmaps.cf /etc/postfix/dynamicmaps.cf
-COPY etc/postfix/main.cf /etc/postfix/main.cf
-COPY etc/postfix/master.cf /etc/postfix/master.cf
-COPY etc/postfix/postfix-files /etc/postfix/postfix-files
-COPY etc/postfix/sasl/smtpd.conf /etc/postfix/sasl/smtpd.conf
-COPY etc/postfix/extfile.cnf /etc/postfix/extfile.cnf
+COPY etc/postfix/dynamicmaps.cf $CWD_PSTF/dynamicmaps.cf
+COPY etc/postfix/main.cf $CWD_PSTF/main.cf
+COPY etc/postfix/master.cf $CWD_PSTF/master.cf
+COPY etc/postfix/postfix-files $CWD_PSTF/postfix-files
+COPY etc/postfix/sasl/smtpd.conf $CWD_PSTF/sasl/smtpd.conf
+COPY etc/postfix/extfile.cnf $CWD_PSTF/extfile.cnf
 
-COPY etc/init.d/gen-cert-smtps-sasl.sh /etc/init.d/gen-cert-smtps-sasl.sh 
+COPY etc/init.d/gen-cert-smtps-sasl.sh $DIRPATH/gen-cert-smtps-sasl.sh
 
 
 COPY etc/procmailrc /etc/procmailrc
@@ -34,24 +54,27 @@ COPY etc/mailname /etc/mailname
 COPY etc/default/spamassassin /etc/default/spamassassin
 COPY etc/default/saslauthd /etc/default/saslauthd
 
-COPY etc/init.d/start.sh /etc/init.d/start.sh
+COPY etc/init.d/start.sh $DIRPATH/start.sh
 
-RUN chmod +x /etc/init.d/gen-cert-smtps-sasl.sh
+#SYSTEM CONFIGURATION PARAMETERS
+RUN chmod +x $DIRPATH/gen-cert-smtps-sasl.sh
 RUN chown postfix:sasl /var/spool/postfix/etc/sasldb2
 RUN chmod 640 /var/spool/postfix/etc/sasldb2
 RUN rm -rf /etc/sasldb2
 RUN ln -s /var/spool/postfix/etc/sasldb2 /etc/sasldb2
-RUN chmod +x /etc/init.d/start.sh
-RUN useradd -ms /bin/bash jerome
+RUN useradd -d /home/${LOGIN} -ms /bin/bash -g $USER -p $PASSWORD $USER
+RUN echo $PASSWORD | saslpasswd2 -c -a smtpauth -u smtp.$DOMAINE $USER
+RUN chmod +x $DIRPATH/start.sh
 
-VOLUME ["/home/jerome/Maildir"]
-#USER jerome
-WORKDIR /etc/courier
+VOLUME ["$MAILDIR"]
 
+#GEN CERT IMAPS and SMTPS SASL
+WORKDIR $CWD_COR
 RUN rm -rf imapd.pem
 RUN mkimapdcert
-RUN sh /etc/init.d/gen-cert-smtps-sasl.sh
+RUN sh $DIRPATH/gen-cert-smtps-sasl.sh
 
 EXPOSE 587 465 25 993 143
 
-CMD ["/bin/bash", "/etc/init.d/start.sh", "-d"]
+#START ENVIRONNEMENT MAIL-SERVER MAYBE USE DATA USER ELSE CREATE NEW MAILDIR
+CMD ["/bin/bash", "$DIRPATH/start.sh", "-d"]
