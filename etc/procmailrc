@@ -1,0 +1,53 @@
+SHELL=/bin/sh
+MAILDIR=$HOME/Maildir/
+DEFAULT=$MAILDIR
+ORGMAIL=$MAILDIR
+DROPPRIVS=yes
+LOGFILE=/var/log/procmailrc.log
+VERBOSE=yes
+LOGABSTRACT=all
+ANOMY=/usr/anomy
+
+:0fw
+| spamc
+
+:0
+* ^X-Spam-Status: Yes
+$DEFAULT/.spam/
+
+#Filtre sujet comportant les mots clée inclus ou non dans la chaine de caratères: collecté dans le fichier ".spam"
+:0
+* ^Subject: .*(Viagra*.|VIAGRA*.|adipex*.|advicer*.|baccarrat*.|blackjackt*.|blackjackt*.|bllogspot*.|byob*.|carisoprodol*.|casino*.|casinos*.|chatroom*.|cialis*.|coolcoolhus*.|coolhu*.|cyclen*.|cyclobenzaprine*.|trading*.|discreetordering*.|equityloans*.|fioricet*.|gambling*.|homeequityloans*.|homefinance*.|holdempoker*.|holdemtexasturbowilson*.|porno*.|jrcreations*.|levitra*.|macinstruct*.|mortgage*.|online-gambling*.|ottawavalleyag*.|paxil*.|penis*.|enlarge*.|pharmacy*.|phentermine*.|poker*.|ringtones*.|schemale*.|slot-machine*.|texas-holdem*.|thorcarlson*.|top-site*.|tramadol*.|trim-spa*.|ultram*.|valeofglamorganconservatives*.|zolus.*|ILOVEYOU*.|iloveyou*.)
+$DEFAULT/.spam/
+
+#Filtre from comportant les mots clée inclus ou non dans la chaine de caratères: collecté dans le fichier ".spam"
+:0
+* ^From: .*(Viagra*.|VIAGRA*.|adipex*.|advicer*.|baccarrat*.|blackjackt*.|blackjackt*.|bllogspot*.|byob*.|carisoprodol*.|casino*.|casinos*.|chatroom*.|cialis*.|coolcoolhus*.|coolhu*.|cyclen*.|cyclobenzaprine*.|trading*.|discreetordering*.|equityloans*.|fioricet*.|gambling*.|homeequityloans*.|homefinance*.|holdempoker*.|holdemtexasturbowilson*.|porno*.|jrcreations*.|levitra*.|macinstruct*.|mortgage*.|online-gambling*.|ottawavalleyag*.|paxil*.|penis*.|enlarge*.|pharmacy*.|phentermine*.|poker*.|ringtones*.|schemale*.|slot-machine*.|texas-holdem*.|thorcarlson*.|top-site*.|tramadol*.|trim-spa*.|ultram*.|valeofglamorganconservatives*.|zolus.*|ILOVEYOU*.|iloveyou*.)
+$DEFAULT/.spam/
+
+
+#Filtre corps du texte limité aux mots clés seuls: collecté dans le fichier ".spam"
+:0 B:
+* [ ](Viagra|VIAGRA|adipex|advicer|baccarrat|blackjackt|blackjackt|bllogspot|byob|carisoprodol|casino|casinos|chatroom|cialis|coolcoolhus|coolhu|cyclen|cyclobenzaprine|trading|discreetordering|equityloans|fioricet|gambling|homeequityloans|homefinance|holdempoker|holdemtexasturbowilson|porno|jrcreations|levitra|macinstruct|mortgage|online-gambling|ottawavalleyag|paxil|penis|enlarge|pharmacy|phentermine|poker|ringtones|schemale|slot-machine|texas-holdem|thorcarlson|top-site|tramadol|trim-spa|ultram|valeofglamorganconservatives|zolus|ILOVEYOU|iloveyou)[ ]
+$DEFAULT/.spam/
+
+#Filtre from ebay.fr/.com : collcté dans ".ebay" 18-07-2012
+:0
+* ^From.*@ebay.fr/.com
+$DEFAULT/.ebay/
+
+:0
+* ^From.*eBay@reply.ebay.fr
+$DEFAULT/.ebay/
+
+
+#Filtre qui sort les pièces jointes suspectes: collecté dans le fichier ".spam"
+:0 B:
+* Content-Disposition: attachment;
+* filename=".*\.(pif|com|scr|lnkocx|vbs|wsf|shs|exe|bat|chm|vbe|hta)"
+$DEFAULT/.spam/
+
+#Forwarde Log Socrate
+:0
+* ^From.*root
+$DEFAULT/.Socrate/

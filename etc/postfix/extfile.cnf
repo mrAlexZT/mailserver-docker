@@ -1,0 +1,10 @@
+[ v3_req ]
+subjectAltName = @alt_names
+
+# Extensions to add to a certificate request
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation
+
+[alt_names]
+IP.1 = 172.17.0.2
+DNS.1 = zamaroczy.fr

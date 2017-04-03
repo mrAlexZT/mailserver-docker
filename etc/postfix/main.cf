@@ -1,0 +1,86 @@
+# Répertoires d'installation de Postfix:
+#command_directory = /usr/sbin
+#daemon_directory = /usr/lib/postfix
+#program_directory = /usr/lib/postfix
+#queue_directory = /var/spool/postfix
+
+# Mise en place des permissions:
+setgid_group = postdrop
+mail_owner = postfix
+
+# Nom de la machine, du domaine et gestion du réseau:
+myhostname = smtp.zamaroczy.fr
+mydomain = zamaroczy.fr
+masquerade_domains = zamaroczy.fr
+mynetworks = 192.168.0.0/24, 10.8.0.0/24, 127.0.0.0/8, 172.17.0.0/2
+
+# Gestion des alias:
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+# Paramètre d'envoi du courriel:
+myorigin = /etc/mailname
+default_transport = smtp
+
+# Serveur d'envoi de votre Fournisseur d'accès à Internet:
+relayhost = 
+
+# Paramètre de reception du courriel:
+mydestination = $myhostname, localhost.$mydomain, $mydomain, localhost 
+inet_interfaces = all
+
+# Utilisation de Maildir pour recevoir et gérer les mails via courier-imap:
+home_mailbox = Maildir/
+mailbox_command = /usr/bin/procmail -a "$EXTENSION" DEFAULT=$HOME/Maildir/ MAILDIR=$HOME/Maildir
+
+mailbox_size_limit = 0
+recipient_delimiter = +
+
+inet_interfaces = all
+inet_protocols = ipv4
+
+smtpd_tls_security_level = may
+smtp_use_tls = yes
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_auth_only = yes
+smtpd_use_tls = yes
+smtpd_tls_key_file = /etc/postfix/ssl/smtpd.key
+smtpd_tls_cert_file = /etc/postfix/ssl/smtpd.crt
+smtpd_tls_CAfile = /etc/postfix/ssl/cacert.pem
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+smtpd_tls_mandatory_ciphers=high
+tls_random_source = dev:/dev/urandom
+smtpd_recipient_limit = 100
+smtpd_helo_restrictions = permit_mynetworks,
+			  reject_invalid_hostname,
+			  permit
+
+smtpd_sender_restrictions = permit_mynetworks, 
+			    reject_unknown_address,
+			    permit
+smtpd_recipient_restrictions =
+	       permit_mynetworks, 
+	       permit_sasl_authenticated,
+	       permit_tls_clientcerts,
+               reject_non_fqdn_sender,
+               reject_non_fqdn_recipient,
+               reject_unknown_sender_domain,
+               reject_unknown_recipient_domain,
+               reject_unauth_pipelining,
+               reject_unauth_destination,
+               reject_rbl_client zen.spamhaus.org,
+               reject_rbl_client list.dsbl.org,
+	       reject_rbl_client bl.spamcop.net,
+	       reject_rbl_client cbl.abuseat.org,
+               permit 
+
+smtpd_sasl_local_domain = $myhostname
+#smtpd_sasl_application_name = smtpd
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+data_directory = /var/lib/postfix
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
