@@ -61,27 +61,13 @@ RUN chown postfix:sasl /var/spool/postfix/etc/sasldb2
 RUN chmod 640 /var/spool/postfix/etc/sasldb2
 RUN rm -rf /etc/sasldb2
 RUN ln -s /var/spool/postfix/etc/sasldb2 /etc/sasldb2
-RUN useradd -d /home/$USER -ms /bin/bash  $USER
-RUN echo $USER:$PASSWORD | chpasswd -c MD5
-RUN echo $PASSWORD | saslpasswd2 -c -a smtpauth -u smtp.$DOMAINE $USER
-RUN chmod +x $DIRPATH/start.sh
-
+RUN chmod +x $DIRPATH/start.sh $DIRPATH/gen-cert-smtps-sasl.sh
 
 #Mount Home directory user
 VOLUME ["$HOME"]
-
-#GEN CERT IMAPS and SMTPS SASL
-WORKDIR $CWD_COR
-RUN rm -rf imapd.pem
-RUN sed -i -e "s/domaine.tld/$DOMAINE/g"  $CWD_COR/imapd.cnf
-RUN sed -i -e "s/user/$USER/g"  $CWD_COR/imapd.cnf
-RUN mkimapdcert
-RUN sh $DIRPATH/gen-cert-smtps-sasl.sh
-
-#Set domaine in configuration postfix
-RUN sed -i -e "s/domaine.tld/$DOMAINE/g"  $CWD_PSTF/main.cf
 
 EXPOSE 587 465 25 993 143
 
 #START ENVIRONNEMENT MAIL-SERVER MAYBE USE DATA USER ELSE CREATE NEW MAILDIR
 CMD ["/bin/bash", `$DIRPATH/start.sh`, "-d"]
+

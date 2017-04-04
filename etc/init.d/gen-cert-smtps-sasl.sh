@@ -3,8 +3,11 @@ DOM=${DOMAINE}
 CWD_PSTF=${CWD_PSTF}
 DAYS=${DAYS}
 DH_BITS=${DH_BITS}
+CWD_COR=${CWD_COR}
+USER=${USER}
 
 # Prepare
+rm -rf $CWD_COR/imapd.pem
 rm -rf $CWD_PSTF/ssl
 mkdir -p $CWD_PSTF/ssl
 
@@ -31,4 +34,10 @@ openssl x509 -req -in $CWD_PSTF/ssl/smtpd.csr \
     -CAkey $CWD_PSTF/ssl/cakey.pem  -CAcreateserial \
     -out $CWD_PSTF/ssl/smtpd.crt \
     -days $DAYS -extensions v3_req -extfile $CWD_PSTF/extfile.cnf
+
+
+#Generate certificat local domaine.tld for IMAPs saslauthd
+sed -i -e "s/domaine.tld/$DOMAINE/g"  $CWD_COR/imapd.cnf
+sed -i -e "s/user/$USER/g"  $CWD_COR/imapd.cnf
+mkimapdcert
 
