@@ -62,6 +62,8 @@ RUN chmod 640 /var/spool/postfix/etc/sasldb2
 RUN rm -rf /etc/sasldb2
 RUN ln -s /var/spool/postfix/etc/sasldb2 /etc/sasldb2
 RUN chmod +x $DIRPATH/start.sh $DIRPATH/gen-cert-smtps-sasl.sh
+RUN ln -sf /dev/stdout /var/log/syslog.log 
+
 
 #Mount Home directory user
 VOLUME ["$HOME"]

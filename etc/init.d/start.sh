@@ -53,5 +53,5 @@ $DIRPATH/spamassassin start
 $DIRPATH/saslauthd start
 $DIRPATH/postfix start
 
-tail -F /var/log/mail.log
+tail -F /var/log/syslog
 
