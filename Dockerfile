@@ -66,7 +66,7 @@ RUN ln -sf /dev/stdout /var/log/syslog.log
 
 
 #Mount Home directory user
-VOLUME ["$HOME"]
+#VOLUME ["$HOME"]
 
 EXPOSE 587 465 25 993 143
 
